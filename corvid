@@ -6,9 +6,9 @@ graph() {
 
 		NAME=$(echo $STATE | __jq '.name')
 		CASES=$(echo $STATE | __jq '.casesReported')
-
-		echo "name: $NAME"
-		echo "cases: $CASES"
+		CASESBYTHOUSAND=$(printf "%.0f\n" $(expr $CASES / 1000))
+		
+		echo "[$NAME] " $(printf '#%.0s' $(seq 1 $CASESBYTHOUSAND))
 	done
 }
 
