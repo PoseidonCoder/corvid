@@ -1,0 +1,30 @@
+graph() {
+	for STATE in $(echo $* | jq -c '.[] | @base64'); do
+		__jq() {
+			echo $STATE | base64 -di | jq -r $1
+		}
+
+		NAME=$(echo $STATE | __jq '.name')
+		CASES=$(echo $STATE | __jq '.casesReported')
+
+		echo "name: $NAME"
+		echo "cases: $CASES"
+	done
+}
+
+createCache() {
+	echo "Creating cache..."
+ 	STATS=$(curl --compressed "https://api.apify.com/v2/key-value-stores/moxA3Q0aZh5LosewB/records/LATEST?disableRedirect=true")
+	echo $STATS > cache.json
+}
+
+STATS=$(cat cache.json) || createCache
+
+TOTALCASES=$(echo $STATS | jq '.totalCases')
+TOTALDEATHS=$(echo $STATS | jq '.totalDeaths')
+
+CASESBYSTATE=$(echo $STATS | jq '.casesByState')
+
+echo "Total Cases: $TOTALCASES"
+echo "Total Deaths: $TOTALDEATHS"
+graph $CASESBYSTATE
