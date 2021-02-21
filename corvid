@@ -19,12 +19,11 @@ createCache() {
 }
 
 STATS=$(cat cache.json) || createCache
-
 TOTALCASES=$(echo $STATS | jq '.totalCases')
 TOTALDEATHS=$(echo $STATS | jq '.totalDeaths')
 
 CASESBYSTATE=$(echo $STATS | jq '.casesByState')
 
+graph $CASESBYSTATE
 echo "Total Cases: $TOTALCASES"
 echo "Total Deaths: $TOTALDEATHS"
-graph $CASESBYSTATE
